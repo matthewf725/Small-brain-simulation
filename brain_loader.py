@@ -14,5 +14,7 @@ def process_interaction(brain, user_input: str):
 
 if __name__ == "__main__":
     brain = load_brain()
-    initial_input = "Hello World!"  # Replace with the actual input
-    process_interaction(brain, initial_input)
+    initial_input = input("User ('End' to stop): ")
+    while initial_input != "End":
+        process_interaction(brain, initial_input)
+        initial_input = input("User ('End' to stop): ")

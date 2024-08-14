@@ -16,26 +16,28 @@ class Brain:
         ca3_activity = sum(neuron.membrane_potential for neuron in self.hippocampus.ca3_neurons)
         ca4_activity = sum(neuron.membrane_potential for neuron in self.hippocampus.ca4_neurons)
 
-        overall_activity = ca1_activity + ca2_activity + ca3_activity + ca4_activity
-        decision_threshold = 0.3 + self.last_action_dopamine - (self.hippocampus.cortisol_system.level * 0.1)
-        # print(self.hippocampus.cortisol_system.level)
-        if overall_activity / 400.0 < decision_threshold and self.hippocampus.dopamine_system.level < 0.1:
+        decision_threshold = ca1_activity + ca2_activity + ca3_activity + ca4_activity
+        overall_activity = decision_threshold + self.last_action_dopamine - (self.hippocampus.cortisol_system.level * 0.1)
+        # print("\n")
+        # print(overall_activity/400.0)
+        # print(decision_threshold)
+        # print(self.hippocampus.dopamine_system.level)
+        if overall_activity / 400.0 < decision_threshold and self.hippocampus.dopamine_system.level < 0.05:
             return False  # Decide to stop
         return True  # Decide to continue
 
     def generate_response(self):
         # Cortisol might influence response generation (e.g., more erratic under high stress)
-        response_length = random.randint(1, 10)
-        if self.hippocampus.cortisol_system.level > 0.5:
-            response_length = max(1, response_length - int(self.hippocampus.cortisol_system.level * 5))
-        response = ''.join(random.choice(string.ascii_letters) for _ in range(response_length))
+        # if self.hippocampus.cortisol_system.level > 0.5:
+        #     response_length = max(1, response_length - int(self.hippocampus.cortisol_system.level * 5))
+        response = ''.join(random.choice(string.ascii_letters) for _ in range(1))
         return response
 
     def respond(self, response: str):
         # Process the generated response, reinforcing dopamine and memory consolidation
         self.process_language_input(response)
         self.last_action_dopamine = self.hippocampus.dopamine_system.level
-        print(f"{response}")
+        print(f"{response}", end="")
 
     def process_language_input(self, text: str):
         encoded_text = self.nervous_system.encode_text(text)
@@ -56,7 +58,7 @@ class Brain:
             # Decide whether to continue or stop
             # input("Enter to continue")
             if not self.decide_to_continue():
-                print("Brain: Decided to stop responding.")
+                print("\nBrain: Decided to stop responding.")
                 break
 
     def save_brain(self, filename="brain.pkl"):

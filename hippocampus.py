@@ -11,7 +11,7 @@ class Dopamine:
             self.level += (stimulus_value * 0.01)
 
     def decay(self):
-        self.level *= 0.65  # Dopamine level decays over time
+        self.level *= 0.693 # Dopamine level decays over time
 
 class Cortisol:
     def __init__(self, release_threshold: float):
@@ -23,7 +23,7 @@ class Cortisol:
             self.level += (stress_value * 0.01)
 
     def decay(self):
-        self.level *= 0.90  # Cortisol level decays more slowly over time
+        self.level *= 0.009625 # Cortisol level decays more slowly over time
 
 class Hippocampus:
     def __init__(self):
