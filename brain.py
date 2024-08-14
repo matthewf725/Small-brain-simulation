@@ -1,5 +1,3 @@
-# brain.py
-
 import random
 import string
 import pickle
@@ -19,17 +17,18 @@ class Brain:
         ca4_activity = sum(neuron.membrane_potential for neuron in self.hippocampus.ca4_neurons)
 
         overall_activity = ca1_activity + ca2_activity + ca3_activity + ca4_activity
-        decision_threshold = 0.3 + self.last_action_dopamine  # Adjust threshold as needed
-
-        # print(f"Overall Activity: {overall_activity}, Decision Threshold: {decision_threshold}")
-
+        decision_threshold = 0.3 + self.last_action_dopamine - (self.hippocampus.cortisol_system.level * 0.1)
+        # print(self.hippocampus.cortisol_system.level)
         if overall_activity / 400.0 < decision_threshold and self.hippocampus.dopamine_system.level < 0.1:
             return False  # Decide to stop
         return True  # Decide to continue
 
     def generate_response(self):
-        # Generate a response letter by letter
-        response = ''.join(random.choice(string.ascii_letters) for _ in range(random.randint(1, 10)))
+        # Cortisol might influence response generation (e.g., more erratic under high stress)
+        response_length = random.randint(1, 10)
+        if self.hippocampus.cortisol_system.level > 0.5:
+            response_length = max(1, response_length - int(self.hippocampus.cortisol_system.level * 5))
+        response = ''.join(random.choice(string.ascii_letters) for _ in range(response_length))
         return response
 
     def respond(self, response: str):
@@ -42,7 +41,6 @@ class Brain:
         encoded_text = self.nervous_system.encode_text(text)
         self.hippocampus.process_information(encoded_text)
         self.hippocampus.consolidate_memory()
-        # print("Brain: Language input processed and memory consolidated.")
 
     def simulate_interaction(self, initial_input: str):
         # Process initial input
@@ -55,9 +53,6 @@ class Brain:
             response = self.generate_response()
             self.respond(response)
 
-            # Decay dopamine after each interaction
-            self.hippocampus.dopamine_system.decay()
-
             # Decide whether to continue or stop
             # input("Enter to continue")
             if not self.decide_to_continue():
@@ -67,4 +62,3 @@ class Brain:
     def save_brain(self, filename="brain.pkl"):
         with open(filename, "wb") as brain_file:
             pickle.dump(self, brain_file)
-        print(f"Brain state saved to {filename}")
