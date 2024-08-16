@@ -45,4 +45,33 @@ class NervousSystem:
             signal_strengths.append(signal_strength)
 
         return list(zip(locations, signal_strengths))
+    
+    def encode_image(self, image: list):
+        locations = []
+        signal_strengths = []
 
+        base_strength = 1.0
+        novelty_boost = 1.5  # Boost for less frequently visited areas
+
+        # Track visits to each location
+        location_visits = {}
+
+        for index, pixel_value in enumerate(image):
+            # Treat each pixel value similarly to ASCII value
+            signal_strength = base_strength / (index + 1)
+            
+            # Track and adjust for location visits
+            if pixel_value in location_visits:
+                visit_count = location_visits[pixel_value]
+                signal_strength /= (visit_count + 1)  # Diminishing returns
+            else:
+                signal_strength *= novelty_boost  # Boost for new areas
+
+            # Update visit count
+            location_visits[pixel_value] = location_visits.get(pixel_value, 0) + 1
+
+            # Append location (pixel value) and adjusted signal strength
+            locations.append(pixel_value)
+            signal_strengths.append(signal_strength)
+
+        return list(zip(locations, signal_strengths))

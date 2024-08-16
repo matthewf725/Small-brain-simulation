@@ -38,12 +38,21 @@ class Hippocampus:
             self.ca3_neurons[i].connect_to(self.ca1_neurons[i], self.schaffer_collaterals[i])
         
         self.dopamine_system = Dopamine(release_threshold=0.5)
-        self.cortisol_system = Cortisol(release_threshold=0.3)  # Example threshold for cortisol
+        self.cortisol_system = Cortisol(release_threshold=0.05)  # Example threshold for cortisol
 
     def process_information(self, encoded_text):
         for (location, signal_strength), neuron in zip(encoded_text, self.dentate_gyrus_neurons):
             self.dopamine_system.release(signal_strength)
+            if signal_strength > self.cortisol_system.release_threshold:  # Example condition
+                self.cortisol_system.release(signal_strength)
             # self.cortisol_system.release(signal_strength)  # Assuming signal strength as a stressor
+            neuron.receive_input(signal_strength, self.dopamine_system.level, self.cortisol_system.level)
+            relevant_neuron = self.ca3_neurons[location % len(self.ca3_neurons)]
+            relevant_neuron.receive_input(signal_strength, self.dopamine_system.level, self.cortisol_system.level)
+
+    def process_image_information(self, encoded_image):
+        for (location, signal_strength), neuron in zip(encoded_image, self.dentate_gyrus_neurons):
+            self.dopamine_system.release(signal_strength)
             neuron.receive_input(signal_strength, self.dopamine_system.level, self.cortisol_system.level)
             relevant_neuron = self.ca3_neurons[location % len(self.ca3_neurons)]
             relevant_neuron.receive_input(signal_strength, self.dopamine_system.level, self.cortisol_system.level)

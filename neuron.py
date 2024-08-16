@@ -1,12 +1,14 @@
 class Neuron:
     def __init__(self, threshold: float, membrane_potential: float = 0.0, 
-                 dopamine_sensitivity: float = 1.0, cortisol_sensitivity: float = 1.0):
+                 dopamine_sensitivity: float = 1.0, cortisol_sensitivity: float = 1.0,
+                 ascii_value: int = 0):
         self.threshold = threshold
         self.membrane_potential = membrane_potential
         self.dopamine_sensitivity = dopamine_sensitivity
         self.cortisol_sensitivity = cortisol_sensitivity
         self.synapses = []
         self.cortisol_level = 0.0  # Initialize cortisol level
+        self.ascii_value = ascii_value  # Associate a specific ASCII value with the neuron
 
     def receive_input(self, input_signal: float, dopamine_level: float = 0.0, cortisol_level: float = 0.0):
         self.cortisol_level = cortisol_level
@@ -18,10 +20,10 @@ class Neuron:
             self.fire()
             
     def __repr__(self):
-        return f"Threshold: {self.threshold}, Membrane Potential: {self.membrane_potential}, Synapses: {self.synapses}, Cortisol Level: {self.cortisol_level}"
+        return f"Threshold: {self.threshold}, Membrane Potential: {self.membrane_potential}, Synapses: {self.synapses}, Cortisol Level: {self.cortisol_level}, ASCII Value: {self.ascii_value}"
 
     def fire(self):
-        self.membrane_potential = 0.0  # Reset potential after firing
+        self.membrane_potential = 0  # Reset potential after firing
         for synapse in self.synapses:
             synapse.transmit_signal()
 
